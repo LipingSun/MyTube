@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe277.lab2.mytube.app;
 
+import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -7,6 +8,7 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.os.AsyncTask;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -19,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-public class MainActivity extends Activity implements ActionBar.TabListener {
+public class MainActivity extends Activity implements ActionBar.TabListener, OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -74,6 +76,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+
+//        new SearchOnYoutube().execute("keyword");
     }
 
 
@@ -128,7 +133,17 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch(position){
+                case 0:
+                    SearchFragment searchTab = SearchFragment.newInstance("a", "b");
+                    return searchTab;
+                case 1:
+                    FavFragment favTab = FavFragment.newInstance("a", "b");
+                    return favTab;
+                default:
+                    return PlaceholderFragment.newInstance(position + 1);
+            }
+
         }
 
         @Override
@@ -182,5 +197,46 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             return rootView;
         }
     }
+
+    @Override
+    public void onFragmentInteraction(String tabName, String id){
+        if(tabName.equals("SearchTab")){
+
+        }
+        else if(tabName.equals("FavTab")){
+
+        }
+
+    }
+
+//    private List<VideoItem> searchResults;
+//
+//
+//
+//    private static class YoutubeService {
+//
+//
+//    }
+//
+//    public class SearchOnYoutube extends AsyncTask<String, Void, Void> {
+//
+//        @Override
+//        protected Void doInBackground(String... params) {
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            TextView txt = (TextView) findViewById(R.id.txt);
+//
+//            System.out.printf("searchResults can be use now");
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {}
+//
+//        @Override
+//        protected void onProgressUpdate(Void... values) {}
+//    }
 
 }
