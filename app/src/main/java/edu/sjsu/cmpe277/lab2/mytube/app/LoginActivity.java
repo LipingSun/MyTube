@@ -7,17 +7,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
+import com.google.api.services.youtube.model.SearchListResponse;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 
 public class LoginActivity extends Activity {
@@ -30,8 +37,12 @@ public class LoginActivity extends Activity {
 
     private static final String PREF_ACCOUNT_NAME = "accountName";
 
-    private GoogleAccountCredential credential;
+    private static GoogleAccountCredential credential;
     private YouTube youtube;
+    YouTube.Search.List search;
+
+
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +68,63 @@ public class LoginActivity extends Activity {
     }
 
     private void goToMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        try {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("TOKEN", credential.getToken());
+            startActivity(intent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (GoogleAuthException e) {
+            e.printStackTrace();
+        }
 
-//        youtube = new YouTube.Builder(AndroidHttp.newCompatibleTransport(), JacksonFactory.getDefaultInstance(), credential)
-//                .setApplicationName(getString(R.string.app_name)).build();
-//
+        handler = new Handler();
+        youtube = new YouTube.Builder(AndroidHttp.newCompatibleTransport(), JacksonFactory.getDefaultInstance(), credential)
+                .setApplicationName(getString(R.string.app_name)).build();
 
+        searchOnYoutube("video keywords");
+
+    }
+
+    SearchListResponse searchResponse;
+
+    private void searchOnYoutube(final String keywords) {
+
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    search = youtube.search().list("id,snippet");
+                    search.setType("video");
+                    search.setMaxResults((long) 10);
+                    search.setOauthToken(credential.getToken());
+//                    search.setKey("AIzaSyAff-Ub7zxh7Ts1zpZC8T2HuzNmO3axF2c");
+                    search.setQ(keywords);
+                    searchResponse = search.execute();
+                } catch (final GooglePlayServicesAvailabilityIOException availabilityException) {
+                    showGooglePlayServicesAvailabilityErrorDialog(
+                            availabilityException.getConnectionStatusCode());
+                } catch (UserRecoverableAuthIOException userRecoverableException) {
+                    startActivityForResult(
+                            userRecoverableException.getIntent(), REQUEST_AUTHORIZATION);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                catch (GoogleAuthException e) {
+                    e.printStackTrace();
+                }
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+//                        updateVideosFound();
+                        if (searchResponse != null) {
+                            Toast.makeText(LoginActivity.this, "Searched", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }.start();
     }
 
     private boolean checkGooglePlayServicesAvailable() {
