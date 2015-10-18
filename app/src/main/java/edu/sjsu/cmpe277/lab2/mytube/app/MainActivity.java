@@ -92,16 +92,20 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
         new Thread() {
 
             List<VideoItem> favorList;
+            boolean insertVideoSucess = false;
             @Override
             public void run() {
                 youTubeService = new YouTubeService(MainActivity.this, token);
-                favorPlaylistId = youTubeService.listOrInsertFavorlist();
+                favorPlaylistId = youTubeService.getOrCreateFavorlist();
                 favorList = youTubeService.getPlaylistVideos(favorPlaylistId);
+                insertVideoSucess = youTubeService.playlistItemInsert(favorPlaylistId, "ziDO6HWb4R8");
 
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        updateFavorList(favorList);
+                        if (insertVideoSucess) {
+                            updateFavorList(favorList);
+                        }
                     }
                 });
             }
@@ -121,6 +125,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
 //        if (favorList == null || favorList.size() <= 0) {
 //            return;
 //        }
+
+        Toast.makeText(MainActivity.this, "create or get favor list", Toast.LENGTH_SHORT).show();
 
     }
 
