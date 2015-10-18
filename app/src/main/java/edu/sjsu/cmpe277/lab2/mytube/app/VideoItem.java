@@ -9,12 +9,12 @@ public class VideoItem {
     private int numOfViews;
     private String publishDate;
 
-    public VideoItem(String title, String thumbnailURL, int numOfViews, String publishDate){
-        this.title = title;
-        this.thumbnailURL = thumbnailURL;
-        this.numOfViews = numOfViews;
-        this.publishDate = publishDate;
-    }
+//    public VideoItem(String title, String thumbnailURL, int numOfViews, String publishDate){
+//        this.title = title;
+//        this.thumbnailURL = thumbnailURL;
+//        this.numOfViews = numOfViews;
+//        this.publishDate = publishDate;
+//    }
 
     public String getTitle() {
         return title;
