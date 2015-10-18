@@ -9,27 +9,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.Toast;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
-import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeScopes;
-import com.google.api.services.youtube.model.SearchListResponse;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
 
 public class LoginActivity extends Activity {
-
-
 
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
     static final int REQUEST_AUTHORIZATION = 1;
@@ -38,8 +28,6 @@ public class LoginActivity extends Activity {
     private static final String PREF_ACCOUNT_NAME = "accountName";
 
     private static GoogleAccountCredential credential;
-    private YouTube youtube;
-    YouTube.Search.List search;
 
     private Handler handler;
 
@@ -68,10 +56,9 @@ public class LoginActivity extends Activity {
         handler = new Handler();
     }
 
-    Intent intent;
     private void goToMainActivity() {
-        intent = new Intent(this, MainActivity.class);
         new Thread() {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             @Override
             public void run() {
 
@@ -82,7 +69,6 @@ public class LoginActivity extends Activity {
                 } catch (GoogleAuthException e) {
                     e.printStackTrace();
                 }
-
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -92,52 +78,6 @@ public class LoginActivity extends Activity {
             }
         }.start();
 
-//        youtube = new YouTube.Builder(AndroidHttp.newCompatibleTransport(), JacksonFactory.getDefaultInstance(), credential)
-//                .setApplicationName(getString(R.string.app_name)).build();
-//
-//        searchOnYoutube("video keywords");
-
-    }
-
-    SearchListResponse searchResponse;
-
-    private void searchOnYoutube(final String keywords) {
-
-        new Thread(){
-            @Override
-            public void run() {
-                try {
-                    search = youtube.search().list("id,snippet");
-                    search.setType("video");
-                    search.setMaxResults((long) 10);
-                    search.setOauthToken(credential.getToken());
-//                    search.setKey("AIzaSyAff-Ub7zxh7Ts1zpZC8T2HuzNmO3axF2c");
-                    search.setQ(keywords);
-                    searchResponse = search.execute();
-                } catch (final GooglePlayServicesAvailabilityIOException availabilityException) {
-                    showGooglePlayServicesAvailabilityErrorDialog(
-                            availabilityException.getConnectionStatusCode());
-                } catch (UserRecoverableAuthIOException userRecoverableException) {
-                    startActivityForResult(
-                            userRecoverableException.getIntent(), REQUEST_AUTHORIZATION);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                catch (GoogleAuthException e) {
-                    e.printStackTrace();
-                }
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-//                        updateVideosFound();
-                        if (searchResponse != null) {
-                            Toast.makeText(LoginActivity.this, "Searched", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        }.start();
     }
 
     private boolean checkGooglePlayServicesAvailable() {
@@ -155,8 +95,7 @@ public class LoginActivity extends Activity {
             // ask user to choose account
             chooseAccount();
         } else {
-//            InsertPlaylistAsyncTask.run(this);
-            Toast.makeText(this, "Success0", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Success0", Toast.LENGTH_SHORT).show();
             goToMainActivity();
         }
     }
@@ -178,8 +117,7 @@ public class LoginActivity extends Activity {
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == Activity.RESULT_OK) {
-//                    AsyncLoadTasks.run(this);
-                    Toast.makeText(this, "Success1", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Success1", Toast.LENGTH_SHORT).show();
                     goToMainActivity();
                 } else {
                     chooseAccount();
@@ -194,8 +132,7 @@ public class LoginActivity extends Activity {
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.commit();
-//                        AsyncLoadTasks.run(this);
-                        Toast.makeText(this, "Success2", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(this, "Success2", Toast.LENGTH_SHORT).show();
                         goToMainActivity();
                     }
                 }
