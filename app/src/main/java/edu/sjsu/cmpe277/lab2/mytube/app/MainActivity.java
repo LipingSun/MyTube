@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
 
     YouTubeService youTubeService;
 
-    List<VideoItem> searchList;
+
 
     private Handler handler;
 
@@ -109,28 +109,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
             }
         }.start();
 
-//        findViewById(R.id.btn_try_search).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                new Thread() {
-//                    @Override
-//                    public void run() {
-//                        searchList = youTubeService.search("video");
-//
-//                        new Handler().post(new Runnable() {
-//                            @Override
-//                            public void run() {
-////                        updateVideosFound();
-//                                if (searchList != null) {
-//                                    Toast.makeText(MainActivity.this, "Searched", Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        });
-//                    }
-//                }.start();
-//            }
-//        });
-
     }
 
 
@@ -165,6 +143,29 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        new Thread() {
+            List<VideoItem> searchList;
+
+            @Override
+            public void run() {
+                searchList = youTubeService.search("video");
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+//                        updateVideosFound();
+                        if (searchList != null) {
+                            Toast.makeText(MainActivity.this, "Searched", Toast.LENGTH_SHORT).show();
+                            updateSearchList(searchList);
+                        }
+                    }
+                });
+            }
+        }.start();
+    }
+
+    private void updateSearchList(List<VideoItem> searchList) {
+        //Todo: xiaoxaio, please use this method to update search list
     }
 
     @Override
@@ -260,8 +261,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
 
     }
 
-//    private List<VideoItem> searchResults;
-//
 //
 //
 //    private static class YoutubeService {
