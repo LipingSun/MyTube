@@ -3,38 +3,39 @@ package edu.sjsu.cmpe277.lab2.mytube.app;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.ListFragment;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import edu.sjsu.cmpe277.lab2.mytube.app.content.FragmentContent;
 
 /**
  * A fragment representing a list of Items.
- * <p>
- * <p>
+ * <p/>
+ * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
 public class SearchFragment extends ListFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String TAG = "SearchTab";
+
+
+    private EditText searchInput;
+    private ListView videos;
 
     private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename and change types of parameters
-    public static SearchFragment newInstance(String param1, String param2) {
+
+    public static SearchFragment newInstance() {
         SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -49,20 +50,39 @@ public class SearchFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
         // Create the adapter to convert the array to views
         //replace FragmentContent.ITEMS with arraylist from youtube interface
-        SearchAdapter adapter = new SearchAdapter(getActivity(), R.layout.fragment_search, FragmentContent.ITEMS);
+        //SearchAdapter adapter = new SearchAdapter(getActivity(), FragmentContent.ITEMS);
 
         // Attach the adapter to a ListView
+        //setListAdapter(adapter);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        searchInput = (EditText) view.findViewById(R.id.search_box);
+        searchInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    updateVideo();
+                    return true;
+                }
+                return false;
+            }
+
+        });
+
+
+        return view;
+    }
+
+    private void updateVideo() {
+        SearchAdapter adapter = new SearchAdapter(getActivity().getApplicationContext(), R.layout.search_list_view, FragmentContent.ITEMS);
         setListAdapter(adapter);
-
-
-
     }
 
 
@@ -90,11 +110,9 @@ public class SearchFragment extends ListFragment {
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction("SearchTab", FragmentContent.ITEMS.get(position).getId());
+            mListener.onFragmentInteraction(TAG, FragmentContent.ITEMS.get(position).getId());
         }
     }
-
-
 
 
 }
