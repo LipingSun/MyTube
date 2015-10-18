@@ -29,6 +29,7 @@ public class YouTubeService {
 
     List<VideoItem> search(String keyword) {
         try {
+            //TODO: liping, please add required fields for video list
             YouTube.Search.List search = youtube.search().list("id,snippet");
             search.setType("video");
             search.setFields("items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)");
