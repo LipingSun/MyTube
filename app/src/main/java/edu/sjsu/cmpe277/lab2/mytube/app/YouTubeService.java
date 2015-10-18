@@ -29,10 +29,9 @@ public class YouTubeService {
 
     public List<VideoItem> search(String keyword) {
         try {
-            //TODO: liping, please add required fields for video list
             YouTube.Search.List searchCommand = youtube.search().list("id,snippet");
             searchCommand.setType("video");
-            searchCommand.setFields("items(id/videoId,snippet/title,snippet/description,snippet/thumbnails/default/url)");
+            searchCommand.setFields("items(id/videoId,snippet/title,snippet/publishedAt,snippet/thumbnails/default/url)");
             searchCommand.setQ(keyword);
 
             SearchListResponse response = searchCommand.execute();
@@ -79,7 +78,7 @@ public class YouTubeService {
         return null;
     }
 
-    public String listOrInsertFavorlist() {
+    public String getOrCreateFavorlist() {
         try {
             YouTube.Playlists.List playlistListCommand = youtube.playlists().list("snippet,contentDetails");
             playlistListCommand.setMine(true);
@@ -87,7 +86,7 @@ public class YouTubeService {
             List<Playlist> playlists = playlistListResponse.getItems();
             Playlist favorPlaylist = null;
             for (Playlist playlist : playlists) {
-                if (playlist.getSnippet().getTitle() == "SJSU-CMPE-277") {
+                if (playlist.getSnippet().getTitle().equals("SJSU-CMPE-277")) {
                     favorPlaylist = playlist;
                     return favorPlaylist.getId();
                 }
@@ -101,7 +100,7 @@ public class YouTubeService {
         return null;
     }
 
-    List<VideoItem> getPlaylistVideos(String playlistId) {
+    public List<VideoItem> getPlaylistVideos(String playlistId) {
         try {
             YouTube.PlaylistItems.List playlistItemCommand =
                     youtube.playlistItems().list("snippet");
@@ -129,6 +128,37 @@ public class YouTubeService {
         return null;
     }
 
+    public boolean playlistItemInsert(String playlistId, String videoId) {
+        // Define a resourceId that identifies the video being added to the
+        // playlist.
+        ResourceId resourceId = new ResourceId();
+        resourceId.setKind("youtube#video");
+        resourceId.setVideoId(videoId);
+
+        // Set fields included in the playlistItem resource's "snippet" part.
+        PlaylistItemSnippet playlistItemSnippet = new PlaylistItemSnippet();
+        playlistItemSnippet.setPlaylistId(playlistId);
+        playlistItemSnippet.setResourceId(resourceId);
+
+        // Create the playlistItem resource and set its snippet to the
+        // object created above.
+        PlaylistItem playlistItem = new PlaylistItem();
+        playlistItem.setSnippet(playlistItemSnippet);
+
+        // Call the API to add the playlist item to the specified playlist.
+        // In the API call, the first argument identifies the resource parts
+        // that the API response should contain, and the second argument is
+        // the playlist item being inserted.
+        PlaylistItem returnedPlaylistItem = null;
+        try {
+            YouTube.PlaylistItems.Insert playlistItemsInsertCommand =
+                    youtube.playlistItems().insert("snippet", playlistItem);
+            returnedPlaylistItem = playlistItemsInsertCommand.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return returnedPlaylistItem != null;
+    }
+
 //    void play(VideoItem videoItem);
-//    void addFavorite(VideoItem videoItem);
 }
