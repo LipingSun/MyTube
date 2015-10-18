@@ -1,6 +1,5 @@
 package edu.sjsu.cmpe277.lab2.mytube.app;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,11 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchListResponse;
 
 
 public class MainActivity extends Activity implements ActionBar.TabListener, OnFragmentInteractionListener {
@@ -47,9 +41,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
 
     YouTubeService youTubeService;
 
-
-
     private Handler handler;
+
+    String favorPlaylistId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,18 +90,37 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
         handler = new Handler();
 
         new Thread() {
+
+            List<VideoItem> favorList;
             @Override
             public void run() {
                 youTubeService = new YouTubeService(MainActivity.this, token);
-//                searchResults = youTubeService.search(keywords);
+                favorPlaylistId = youTubeService.listOrInsertFavorlist();
+                favorList = youTubeService.getPlaylistVideos(favorPlaylistId);
+
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-//                        updateVideosFound();
+                        updateFavorList(favorList);
                     }
                 });
             }
         }.start();
+
+    }
+
+    private void updateSearchList(List<VideoItem> searchList) {
+        //Todo: xiaoxaio, please use this method to update search list
+        if (searchList == null || searchList.size() <= 0) {
+            return;
+        }
+
+    }
+
+    private void updateFavorList(List<VideoItem> favorList) {
+//        if (favorList == null || favorList.size() <= 0) {
+//            return;
+//        }
 
     }
 
@@ -153,19 +166,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-//                        updateVideosFound();
-                        if (searchList != null) {
-                            Toast.makeText(MainActivity.this, "Searched", Toast.LENGTH_SHORT).show();
-                            updateSearchList(searchList);
-                        }
+                        Toast.makeText(MainActivity.this, "Searched", Toast.LENGTH_SHORT).show();
+                        updateSearchList(searchList);
                     }
                 });
             }
         }.start();
-    }
-
-    private void updateSearchList(List<VideoItem> searchList) {
-        //Todo: xiaoxaio, please use this method to update search list
     }
 
     @Override
@@ -188,7 +194,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
                 case 0:
-                    SearchFragment searchTab = SearchFragment.newInstance("a", "b");
+                    SearchFragment searchTab = SearchFragment.newInstance();
                     return searchTab;
                 case 1:
                     FavFragment favTab = FavFragment.newInstance("a", "b");
@@ -260,33 +266,5 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
         }
 
     }
-
-//
-//
-//    private static class YoutubeService {
-//
-//
-//    }
-//
-//    public class SearchOnYoutube extends AsyncTask<String, Void, Void> {
-//
-//        @Override
-//        protected Void doInBackground(String... params) {
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String result) {
-//            TextView txt = (TextView) findViewById(R.id.txt);
-//
-//            System.out.printf("searchResults can be use now");
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {}
-//
-//        @Override
-//        protected void onProgressUpdate(Void... values) {}
-//    }
 
 }
