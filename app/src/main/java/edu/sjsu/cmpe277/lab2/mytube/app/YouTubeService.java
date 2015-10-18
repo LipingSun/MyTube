@@ -1,13 +1,8 @@
 package edu.sjsu.cmpe277.lab2.mytube.app;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.*;
@@ -44,7 +39,7 @@ public class YouTubeService {
 //                item.setNumOfViews(result.getSnippet().get);
                 item.setPublishDate(result.getSnippet().getPublishedAt().toString());
                 item.setThumbnailURL(result.getSnippet().getThumbnails().getDefault().getUrl());
-                item.setId(result.getId().getVideoId());
+                item.setVideoIdId(result.getId().getVideoId());
                 items.add(item);
             }
 
@@ -78,7 +73,7 @@ public class YouTubeService {
         return null;
     }
 
-    public String getOrCreateFavorlist() {
+    public String getOrCreateFavorList() {
         try {
             YouTube.Playlists.List playlistListCommand = youtube.playlists().list("snippet,contentDetails");
             playlistListCommand.setMine(true);
@@ -115,7 +110,8 @@ public class YouTubeService {
                 item.setTitle(result.getSnippet().getTitle());
                 item.setPublishDate(result.getSnippet().getPublishedAt().toString());
                 item.setThumbnailURL(result.getSnippet().getThumbnails().getDefault().getUrl());
-                item.setId(result.getSnippet().getResourceId().getVideoId());
+                item.setVideoIdId(result.getSnippet().getResourceId().getVideoId());
+                item.setFavorPlaylistItemId(result.getId());
                 items.add(item);
             }
 
@@ -158,6 +154,17 @@ public class YouTubeService {
             e.printStackTrace();
         }
         return returnedPlaylistItem != null;
+    }
+
+    public boolean playlistItemDetele(String playlistId, String favorPlaylistItemId) {
+        try {
+            YouTube.PlaylistItems.Delete playlistItemsDeleteCommand = youtube.playlistItems().delete(favorPlaylistItemId);
+            playlistItemsDeleteCommand.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 //    void play(VideoItem videoItem);
