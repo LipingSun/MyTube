@@ -1,5 +1,7 @@
 package edu.sjsu.cmpe277.lab2.mytube.app;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -16,6 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.SearchListResponse;
 
 
 public class MainActivity extends Activity implements ActionBar.TabListener, OnFragmentInteractionListener {
@@ -38,6 +46,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
     String token;
 
     YouTubeService youTubeService;
+
+    List<VideoItem> searchList;
+
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +93,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
                             .setTabListener(this));
         }
 
-        new Thread(){
+        handler = new Handler();
+
+        new Thread() {
             @Override
             public void run() {
                 youTubeService = new YouTubeService(MainActivity.this, token);
 //                searchResults = youTubeService.search(keywords);
-                new Handler().post(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
 //                        updateVideosFound();
@@ -94,6 +108,28 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
                 });
             }
         }.start();
+
+//        findViewById(R.id.btn_try_search).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        searchList = youTubeService.search("video");
+//
+//                        new Handler().post(new Runnable() {
+//                            @Override
+//                            public void run() {
+////                        updateVideosFound();
+//                                if (searchList != null) {
+//                                    Toast.makeText(MainActivity.this, "Searched", Toast.LENGTH_SHORT).show();
+//                                }
+//                            }
+//                        });
+//                    }
+//                }.start();
+//            }
+//        });
 
     }
 
@@ -149,7 +185,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            switch(position){
+            switch (position) {
                 case 0:
                     SearchFragment searchTab = SearchFragment.newInstance("a", "b");
                     return searchTab;
@@ -215,11 +251,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
     }
 
     @Override
-    public void onFragmentInteraction(String tabName, String id){
-        if(tabName.equals("SearchTab")){
+    public void onFragmentInteraction(String tabName, String id) {
+        if (tabName.equals("SearchTab")) {
 
-        }
-        else if(tabName.equals("FavTab")){
+        } else if (tabName.equals("FavTab")) {
 
         }
 
