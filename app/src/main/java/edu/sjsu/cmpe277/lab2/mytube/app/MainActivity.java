@@ -1,6 +1,5 @@
 package edu.sjsu.cmpe277.lab2.mytube.app;
 
-import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -8,17 +7,15 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 
 public class MainActivity extends Activity implements ActionBar.TabListener, OnFragmentInteractionListener {
@@ -38,10 +35,17 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
      */
     ViewPager mViewPager;
 
+    String token;
+
+    YouTubeService youTubeService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Get the token from the intent
+        token = getIntent().getStringExtra("TOKEN");
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -77,8 +81,20 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
                             .setTabListener(this));
         }
 
+        new Thread(){
+            @Override
+            public void run() {
+                youTubeService = new YouTubeService(MainActivity.this, token);
+//                searchResults = youTubeService.search(keywords);
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+//                        updateVideosFound();
+                    }
+                });
+            }
+        }.start();
 
-//        new SearchOnYoutube().execute("keyword");
     }
 
 
@@ -148,7 +164,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
+            // Show 2 total pages.
             return 2;
         }
 
