@@ -41,7 +41,6 @@ public class LoginActivity extends Activity {
     private YouTube youtube;
     YouTube.Search.List search;
 
-
     private Handler handler;
 
     @Override
@@ -65,24 +64,38 @@ public class LoginActivity extends Activity {
                 }
             }
         });
-    }
-
-    private void goToMainActivity() {
-        try {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("TOKEN", credential.getToken());
-            startActivity(intent);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GoogleAuthException e) {
-            e.printStackTrace();
-        }
 
         handler = new Handler();
-        youtube = new YouTube.Builder(AndroidHttp.newCompatibleTransport(), JacksonFactory.getDefaultInstance(), credential)
-                .setApplicationName(getString(R.string.app_name)).build();
+    }
 
-        searchOnYoutube("video keywords");
+    Intent intent;
+    private void goToMainActivity() {
+        intent = new Intent(this, MainActivity.class);
+        new Thread() {
+            @Override
+            public void run() {
+
+                try {
+                    intent.putExtra("TOKEN", credential.getToken());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (GoogleAuthException e) {
+                    e.printStackTrace();
+                }
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(intent);
+                    }
+                });
+            }
+        }.start();
+
+//        youtube = new YouTube.Builder(AndroidHttp.newCompatibleTransport(), JacksonFactory.getDefaultInstance(), credential)
+//                .setApplicationName(getString(R.string.app_name)).build();
+//
+//        searchOnYoutube("video keywords");
 
     }
 
