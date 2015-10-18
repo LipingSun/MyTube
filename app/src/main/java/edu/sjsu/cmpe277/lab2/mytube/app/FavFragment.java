@@ -1,12 +1,24 @@
 package edu.sjsu.cmpe277.lab2.mytube.app;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.ListFragment;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 
 import edu.sjsu.cmpe277.lab2.mytube.app.content.FragmentContent;
 
@@ -58,8 +70,15 @@ public class FavFragment extends ListFragment {
         }
 
         // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<VideoItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, FragmentContent.ITEMS));
+//        setListAdapter(new ArrayAdapter<VideoItem>(getActivity(),
+//                android.R.layout.simple_list_item_1, android.R.id.text1, FragmentContent.ITEMS));
+
+        // Create the adapter to convert the array to views
+        //replace FragmentContent.ITEMS with arraylist from youtube interface
+        FavAdapter adapter = new FavAdapter(getActivity(), R.layout.fragment_fav, FragmentContent.ITEMS);
+
+        // Attach the adapter to a ListView
+        setListAdapter(adapter);
     }
 
 
