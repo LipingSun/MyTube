@@ -27,7 +27,7 @@ public class FragmentContent {
 
     private static void addItem(VideoItem item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.getId(), item);
+        ITEM_MAP.put(item.getVideoId(), item);
     }
 
 
