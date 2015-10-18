@@ -52,9 +52,18 @@ public class LoginActivity extends Activity {
                 if (checkGooglePlayServicesAvailable()) {
                     haveGooglePlayServices();
                 }
-//                youtube = new YouTube.Builder(AndroidHttp.newCompatibleTransport(), JacksonFactory.getDefaultInstance(), credential).setApplicationName("YouTubeSample").build();
             }
         });
+    }
+
+    private void goToMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+//        youtube = new YouTube.Builder(AndroidHttp.newCompatibleTransport(), JacksonFactory.getDefaultInstance(), credential)
+//                .setApplicationName(getString(R.string.app_name)).build();
+//
+
     }
 
     private boolean checkGooglePlayServicesAvailable() {
@@ -74,6 +83,7 @@ public class LoginActivity extends Activity {
         } else {
 //            InsertPlaylistAsyncTask.run(this);
             Toast.makeText(this, "Success0", Toast.LENGTH_SHORT).show();
+            goToMainActivity();
         }
     }
 
@@ -96,6 +106,7 @@ public class LoginActivity extends Activity {
                 if (resultCode == Activity.RESULT_OK) {
 //                    AsyncLoadTasks.run(this);
                     Toast.makeText(this, "Success1", Toast.LENGTH_SHORT).show();
+                    goToMainActivity();
                 } else {
                     chooseAccount();
                 }
@@ -111,6 +122,7 @@ public class LoginActivity extends Activity {
                         editor.commit();
 //                        AsyncLoadTasks.run(this);
                         Toast.makeText(this, "Success2", Toast.LENGTH_SHORT).show();
+                        goToMainActivity();
                     }
                 }
                 break;
