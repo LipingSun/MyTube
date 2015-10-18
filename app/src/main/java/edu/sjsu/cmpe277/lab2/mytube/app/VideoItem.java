@@ -3,7 +3,6 @@ package edu.sjsu.cmpe277.lab2.mytube.app;
 public class VideoItem {
 
     private String title;
-    private String description;
     private String thumbnailURL;
     private String id;
     private int numOfViews;
@@ -26,14 +25,6 @@ public class VideoItem {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getThumbnailURL() {
