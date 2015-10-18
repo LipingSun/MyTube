@@ -93,17 +93,19 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnF
 
             List<VideoItem> favorList;
             boolean insertVideoSucess = false;
+            boolean deleteVideoSucess = false;
             @Override
             public void run() {
                 youTubeService = new YouTubeService(MainActivity.this, token);
-                favorPlaylistId = youTubeService.getOrCreateFavorlist();
+                favorPlaylistId = youTubeService.getOrCreateFavorList();
                 favorList = youTubeService.getPlaylistVideos(favorPlaylistId);
-                insertVideoSucess = youTubeService.playlistItemInsert(favorPlaylistId, "ziDO6HWb4R8");
+//                insertVideoSucess = youTubeService.playlistItemInsert(favorPlaylistId, "ziDO6HWb4R8");
+                deleteVideoSucess = youTubeService.playlistItemDetele(favorPlaylistId, "PLb-Az_p_YkNiEbsKTJAvCNYrrUTI9Q_lr4INCdVmd8Dg");
 
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (insertVideoSucess) {
+                        if (deleteVideoSucess) {
                             updateFavorList(favorList);
                         }
                     }
