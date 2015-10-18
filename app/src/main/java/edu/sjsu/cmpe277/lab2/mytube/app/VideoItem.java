@@ -4,7 +4,8 @@ public class VideoItem {
 
     private String title;
     private String thumbnailURL;
-    private String id;
+    private String videoId;
+    private String favorPlaylistItemId;
     private int numOfViews;
     private String publishDate;
 
@@ -35,12 +36,12 @@ public class VideoItem {
         this.thumbnailURL = thumbnailURL;
     }
 
-    public String getId() {
-        return id;
+    public String getVideoId() {
+        return videoId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setVideoIdId(String videoId) {
+        this.videoId = videoId;
     }
 
     public int getNumOfViews() {
@@ -57,5 +58,13 @@ public class VideoItem {
 
     public void setPublishDate(String publishDate) {
         this.publishDate = publishDate;
+    }
+
+    public String getFavorPlaylistItemId() {
+        return favorPlaylistItemId;
+    }
+
+    public void setFavorPlaylistItemId(String favorPlaylistItemId) {
+        this.favorPlaylistItemId = favorPlaylistItemId;
     }
 }
