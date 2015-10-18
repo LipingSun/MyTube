@@ -110,7 +110,7 @@ public class SearchFragment extends ListFragment {
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(TAG, FragmentContent.ITEMS.get(position).getId());
+            mListener.onFragmentInteraction(TAG, FragmentContent.ITEMS.get(position).getVideoId());
         }
     }
 
